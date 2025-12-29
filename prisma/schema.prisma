@@ -7,22 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  role      String   @default("USER") // USER, CONTRACTOR, ADMIN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  projects    Project[]
+  contractors Contractor[]
+
+  @@index([clerkId])
+  @@index([email])
+}
+
 model Project {
   id          String    @id @default(cuid())
   name        String
   description String?
   address     String
-  status      String    @default("PLANNING") // PLANNING, IN_PROGRESS, COMPLETED, ON_HOLD
+  status      String    @default("PLANNING") // PLANNING, IN_PROGRESS, COMPLETED, ON_HOLD, CANCELLED
   budget      Float?
   startDate   DateTime?
   endDate     DateTime?
   isPublic    Boolean   @default(false)
-  userId      String    // Clerk user ID
+  
+  // Owner (from Clerk)
+  userId      String
+  user        User      @relation(fields: [userId], references: [clerkId])
+  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([userId])
   @@index([status])
+  @@index([createdAt])
 }
 
 model Contractor {
@@ -31,8 +53,13 @@ model Contractor {
   email     String   @unique
   phone     String?
   company   String?
-  trades    String[] // e.g., ["Plumbing", "HVAC", "Electrical"]
-  userId    String   // Who added this contractor
+  trades    String[] // Array of trade specialties
+  rating    Float?   @default(0)
+  
+  // Who added this contractor
+  userId    String
+  user      User     @relation(fields: [userId], references: [clerkId])
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
