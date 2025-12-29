@@ -6,3 +6,36 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Project {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  address     String
+  status      String    @default("PLANNING") // PLANNING, IN_PROGRESS, COMPLETED, ON_HOLD
+  budget      Float?
+  startDate   DateTime?
+  endDate     DateTime?
+  isPublic    Boolean   @default(false)
+  userId      String    // Clerk user ID
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Contractor {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  company   String?
+  trades    String[] // e.g., ["Plumbing", "HVAC", "Electrical"]
+  userId    String   // Who added this contractor
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([email])
+}
