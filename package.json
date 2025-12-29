@@ -1,25 +1,30 @@
 {
   "name": "ottoway-backend-git",
   "version": "1.0.0",
-  "description": "Ottoway backend API",
-  "private": true,
-  "type": "commonjs",
+  "description": "Ottoway Backend",
   "main": "dist/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js"
-  },
+    "start": "node dist/index.js",
+    "prisma:generate": "prisma generate",
+  "prisma:migrate:deploy": "prisma migrate deploy",
+    "postinstall": "prisma generate",
+    
+},
   "dependencies": {
+    "@prisma/client": "^6.2.1",
     "express": "^4.19.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.30",
+    "prisma": "^6.2.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.4"
-  },
-  "engines": {
-    "node": ">=18"
+    "typescript": "^5.7.2"
   }
 }
